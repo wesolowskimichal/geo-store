@@ -20,9 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-k4=9(b9=!#hb@drxr8z52n6o!wdl_^^a8%+*xwynb_(fxlna%0"  # noqa E501
-)
+SECRET_KEY = "django-insecure-k4=9(b9=!#hb@drxr8z52n6o!wdl_^^a8%+*xwynb_(fxlna%0"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "geolocation",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -90,18 +89,29 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa E501
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",  # noqa E501
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",  # noqa E501
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",  # noqa E501
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Geo Store API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
 
 
 # Internationalization
