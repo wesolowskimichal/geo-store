@@ -1,0 +1,58 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: ["*"]
+  push:
+    branches: ["main"]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_HOST: localhost
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: geo_store_db
+      DJANGO_SETTINGS_MODULE: geo_store.settings
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: geo_store_db
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python manage.py makemigrations --no-input
+          python manage.py migrate --no-input
+
+      - name: Run tests
+        run: pytest -vv

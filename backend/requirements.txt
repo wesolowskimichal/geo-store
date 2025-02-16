@@ -32,6 +32,7 @@ psycopg2-binary==2.9.10
 pycodestyle==2.11.1
 pyflakes==3.1.0
 pytest==8.3.4
+pytest-django==4.10.0
 PyYAML==6.0.2
 referencing==0.36.2
 rpds-py==0.22.3
