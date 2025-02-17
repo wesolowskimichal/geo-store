@@ -2,6 +2,6 @@
   "editor.defaultFormatter": "ms-python.black-formatter",
   "flake8.args": [
     "--config=backend/.flake8",
-    "--line-length=79"
- ]
+    "--line-length=160"
+  ]
 }
