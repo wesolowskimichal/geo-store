@@ -16,6 +16,11 @@ else:
     GeoFloatField = FloatField
     GeoDateTimeField = DateTimeField
 
+STATUS_CHOICES = (
+    ("SUCCESS", "Success"),
+    ("FAILED", "Failed"),
+)
+
 
 class GeoData(Model):
     ip_or_url: GeoCharField = CharField(max_length=255)
@@ -25,6 +30,11 @@ class GeoData(Model):
     longitude: GeoFloatField = FloatField(blank=True, null=True)
     country_flag_emoji_unicode: GeoCharField = CharField(max_length=100, blank=True)
     raw_response = JSONField(blank=True, null=True)
+    status: GeoCharField = CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default="FAILED",
+    )
     created_at: GeoDateTimeField = DateTimeField(auto_now_add=True)
     updated_at: GeoDateTimeField = DateTimeField(auto_now=True)
 
