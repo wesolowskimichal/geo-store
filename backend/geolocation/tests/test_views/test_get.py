@@ -56,7 +56,7 @@ class TestGetAPI(BaseAPITestCase):
         payload = {"ip_or_url": "1.1.1.1"}
         new_id = GeoData.objects.create(**payload).id
 
-        detail_url = reverse("geodata-detail", args=[new_id])
+        detail_url = reverse("geodata-destroy-detail", args=[new_id])
         response = self.client.get(detail_url, format="json")
         assert response.status_code == status.HTTP_200_OK, response.data
         data = response.data
@@ -77,7 +77,7 @@ class TestGetAPI(BaseAPITestCase):
         """
         Ensure GET /api/geodata/<pk>/ returns 404 for a non-existent record.
         """
-        detail_url = reverse("geodata-detail", args=[999999])
+        detail_url = reverse("geodata-destroy-detail", args=[999999])
         response = self.client.get(detail_url, format="json")
         assert response.status_code == status.HTTP_404_NOT_FOUND, response.data
 
@@ -103,11 +103,11 @@ class TestGetAPI(BaseAPITestCase):
         the view returns a 503 response with the appropriate error detail.
         """
         monkeypatch.setattr(
-            "geolocation.views.GeoDataDetailAPIView.get_queryset",
+            "geolocation.views.GeoDataDestroyDetailAPIView.get_queryset",
             self.fake_save_raise_operational_error,
         )
 
-        detail_url = reverse("geodata-detail", args=[999999])
+        detail_url = reverse("geodata-destroy-detail", args=[999999])
         response = self.client.get(detail_url)
         assert response.status_code == 503, response.data
         data = response.data

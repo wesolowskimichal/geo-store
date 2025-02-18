@@ -1,8 +1,12 @@
 from django.urls import path
 from .views import GeoDataListCreateAPIView
-from .views import GeoDataDetailAPIView
+from .views import GeoDataDestroyDetailAPIView
 
 urlpatterns = [
     path("geodata/", GeoDataListCreateAPIView.as_view(), name="geodata-list-create"),
-    path("geodata/<int:pk>/", GeoDataDetailAPIView.as_view(), name="geodata-detail"),
+    path(
+        "geodata/<int:pk>/",
+        GeoDataDestroyDetailAPIView.as_view(),
+        name="geodata-destroy-detail",
+    ),
 ]
