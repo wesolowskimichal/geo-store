@@ -40,6 +40,7 @@ class GeoDataListCreateAPIView(ListCreateAPIView):
                 instance.status = "FAILED"
                 instance.save(update_fields=["raw_response", "status"])
             else:
+                instance.type = service_data.get("type", "")
                 instance.country_name = service_data.get("country_name", "")
                 instance.latitude = service_data.get("latitude")
                 instance.longitude = service_data.get("longitude")
