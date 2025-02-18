@@ -12,7 +12,7 @@ class TestPostAPI(BaseAPITestCase):
         the view returns a 400 response with the appropriate error detail.
         """
         client = APIClient()
-        url = reverse("geodata-create")
+        url = reverse("geodata-list-create")
         payload = {"invalid_field": None}
         response = client.post(url, payload, format="json")
         assert response.status_code == 400, response.data
@@ -30,7 +30,7 @@ class TestPostAPI(BaseAPITestCase):
             self.fake_get_geolocation_data_success,
         )
         client = APIClient()
-        url = reverse("geodata-create")
+        url = reverse("geodata-list-create")
         payload = {"ip_or_url": "1.1.1.1", "type": "ip"}
         response = client.post(url, payload, format="json")
         assert response.status_code == 201, response.data
@@ -52,7 +52,7 @@ class TestPostAPI(BaseAPITestCase):
             self.fake_get_geolocation_data_failure,
         )
         client = APIClient()
-        url = reverse("geodata-create")
+        url = reverse("geodata-list-create")
         payload = {"ip_or_url": "1.1.1.1", "type": "ip"}
         response = client.post(url, payload, format="json")
         assert response.status_code == 201, response.data
@@ -76,7 +76,7 @@ class TestPostAPI(BaseAPITestCase):
             self.fake_get_geolocation_data_exception,
         )
         client = APIClient()
-        url = reverse("geodata-create")
+        url = reverse("geodata-list-create")
         payload = {"ip_or_url": "1.1.1.1", "type": "ip"}
         response = client.post(url, payload, format="json")
         assert response.status_code == 201, response.data
@@ -91,8 +91,14 @@ class TestPostAPI(BaseAPITestCase):
         Test that when serializer.save() fails due to a database error,
         the view returns a 503 response with the appropriate error detail.
         """
-        self.run_database_unavailable_test(
-            monkeypatch,
+        monkeypatch.setattr(
             "geolocation.serializers.GeoDataSerializer.save",
             self.fake_save_raise_operational_error,
         )
+
+        payload = {"ip_or_url": "1.1.1.1", "type": "ip"}
+        create_url = reverse("geodata-list-create")
+        response = self.client.post(create_url, payload, format="json")
+        assert response.status_code == 503, response.data
+        data = response.data
+        assert "database is unavailable" in str(data.get("detail")).lower()
