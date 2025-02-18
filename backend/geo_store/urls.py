@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.urls import include
 from django.urls import path
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -33,4 +34,5 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path("api/", include("geolocation.urls")),
 ]

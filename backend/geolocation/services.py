@@ -2,6 +2,7 @@ import os
 import logging
 from typing import Dict
 import requests  # type: ignore
+from .exceptions import IPStackAPIException
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +22,6 @@ def get_geolocation_data(ip_or_domain: str) -> Dict:
         response.raise_for_status()
     except requests.RequestException as exc:
         logger.error("Failed to retrieve geolocation data from ipstack: %s", exc)
-        raise
+        raise IPStackAPIException(detail=str(exc))
 
     return response.json()

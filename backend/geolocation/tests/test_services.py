@@ -2,6 +2,7 @@ import requests  # type: ignore
 import pytest
 
 from geolocation.services import get_geolocation_data, IPSTACK_BASE_URL
+from geolocation.exceptions import IPStackAPIException
 
 
 class DummyResponse:
@@ -65,7 +66,7 @@ def test_get_geolocation_data_http_error(monkeypatch):
     """
     monkeypatch.setenv("IPSTACK_API_KEY", "dummykey")
     monkeypatch.setattr(requests, "get", fake_requests_get_http_error)
-    with pytest.raises(requests.HTTPError):
+    with pytest.raises(IPStackAPIException):
         get_geolocation_data("1.1.1.1")
 
 
@@ -82,6 +83,6 @@ def test_get_geolocation_data_request_exception(monkeypatch, caplog):
     """
     monkeypatch.setenv("IPSTACK_API_KEY", "dummykey")
     monkeypatch.setattr(requests, "get", fake_requests_get_exception)
-    with pytest.raises(requests.RequestException):
+    with pytest.raises(IPStackAPIException):
         get_geolocation_data("1.1.1.1")
     assert "Failed to retrieve geolocation data from ipstack:" in caplog.text
