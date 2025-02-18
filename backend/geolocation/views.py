@@ -15,9 +15,7 @@ class GeoDataCreateAPIView(CreateAPIView):
         try:
             instance = serializer.save()
         except OperationalError as exc:
-            raise DatabaseUnavailableException(
-                detail="Database is currently unavailable."
-            ) from exc
+            raise DatabaseUnavailableException() from exc
         try:
             service_data = get_geolocation_data(instance.ip_or_url)
         except IPStackAPIException as exc:
