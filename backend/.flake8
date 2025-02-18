@@ -1,0 +1,16 @@
+[flake8]
+max-line-length = 160
+per-file-ignores =
+    __init__.py: F401
+
+exclude =
+    .git,
+    __pycache__,
+    venv,
+    .venv,
+    migrations,
+    env
+
+enable-extensions = G
+
+django-settings-module = geo_store.settings

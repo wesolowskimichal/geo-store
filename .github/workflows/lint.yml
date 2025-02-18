@@ -1,0 +1,30 @@
+name: Lint
+
+on:
+  pull_request:
+    branches: ["*"]
+  push:
+    branches: ["production"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Pre-commit Hooks
+        run: pre-commit run --all-files --verbose --config=.pre-commit-config.yaml
