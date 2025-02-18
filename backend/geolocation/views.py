@@ -1,5 +1,5 @@
 from rest_framework.generics import ListCreateAPIView  # type: ignore
-from rest_framework.generics import RetrieveAPIView  # type: ignore
+from rest_framework.generics import RetrieveDestroyAPIView  # type: ignore
 from django.db import OperationalError
 from .models import GeoData
 from .serializers import GeoDataSerializer
@@ -56,7 +56,7 @@ class GeoDataListCreateAPIView(ListCreateAPIView):
                 )
 
 
-class GeoDataDetailAPIView(RetrieveAPIView):
+class GeoDataDestroyDetailAPIView(RetrieveDestroyAPIView):
     queryset = GeoData.objects.all()
     serializer_class = GeoDataSerializer
 
@@ -65,5 +65,11 @@ class GeoDataDetailAPIView(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         try:
             return super().get(request, *args, **kwargs)
+        except OperationalError as exc:
+            raise DatabaseUnavailableException() from exc
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            return super().delete(request, *args, **kwargs)
         except OperationalError as exc:
             raise DatabaseUnavailableException() from exc

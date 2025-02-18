@@ -39,7 +39,7 @@ class GeoData(Model):
     updated_at: GeoDateTimeField = DateTimeField(auto_now=True)
 
     def get_absolute_url(self) -> str:
-        return reverse("geodata-detail", args=[str(self.pk)])
+        return reverse("geodata-destroy-detail", args=[str(self.pk)])
 
     def __str__(self) -> str:
         return self.ip_or_url
