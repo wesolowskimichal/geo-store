@@ -1,15 +1,27 @@
-from rest_framework.generics import CreateAPIView  # type: ignore
+from rest_framework.generics import ListCreateAPIView  # type: ignore
+from rest_framework.generics import RetrieveAPIView  # type: ignore
 from django.db import OperationalError
 from .models import GeoData
 from .serializers import GeoDataSerializer
+from .serializers import GeoDataShortSerializer
 from .services import get_geolocation_data
 from .exceptions import IPStackAPIException
 from .exceptions import DatabaseUnavailableException
 
 
-class GeoDataCreateAPIView(CreateAPIView):
+class GeoDataListCreateAPIView(ListCreateAPIView):
     queryset = GeoData.objects.all()
-    serializer_class = GeoDataSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return GeoDataShortSerializer
+        return GeoDataSerializer
+
+    def get(self, request, *args, **kwargs):
+        try:
+            return super().get(request, *args, **kwargs)
+        except OperationalError as exc:
+            raise DatabaseUnavailableException() from exc
 
     def perform_create(self, serializer):
         try:
@@ -42,3 +54,16 @@ class GeoDataCreateAPIView(CreateAPIView):
                         "status",
                     ]
                 )
+
+
+class GeoDataDetailAPIView(RetrieveAPIView):
+    queryset = GeoData.objects.all()
+    serializer_class = GeoDataSerializer
+
+    lookup_field = "pk"
+
+    def get(self, request, *args, **kwargs):
+        try:
+            return super().get(request, *args, **kwargs)
+        except OperationalError as exc:
+            raise DatabaseUnavailableException() from exc

@@ -17,3 +17,20 @@ class GeoDataSerializer(ModelSerializer):
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
         }
+
+
+class GeoDataShortSerializer(ModelSerializer):
+    class Meta:
+        model = GeoData
+        fields = (
+            "id",
+            "ip_or_url",
+            "type",
+            "country_name",
+            "latitude",
+            "longitude",
+            "country_flag_emoji_unicode",
+            "status",
+            "created_at",
+            "updated_at",
+        )

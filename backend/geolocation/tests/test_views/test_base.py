@@ -1,6 +1,5 @@
 from django.db import OperationalError
 from rest_framework.test import APIClient  # type: ignore
-from django.urls import reverse
 
 from geolocation.exceptions import IPStackAPIException
 
@@ -38,18 +37,3 @@ class BaseAPITestCase:
     def fake_get_geolocation_data_exception(ip_or_domain: str):
         """Simulate a network or other exception during the service call."""
         raise IPStackAPIException(detail="Network Error")
-
-    def run_database_unavailable_test(self, monkeypatch, attr: str, fake_func):
-        """
-        Helper to test that when serializer.save() fails due to a database error,
-        the view returns a 503 response with the expected error detail.
-        """
-        monkeypatch.setattr(attr, fake_func)
-
-        client = APIClient()
-        url = reverse("geodata-create")
-        payload = {"ip_or_url": "1.1.1.1", "type": "ip"}
-        response = client.post(url, payload, format="json")
-        assert response.status_code == 503, response.data
-        data = response.data
-        assert "database is unavailable" in str(data.get("detail")).lower()
