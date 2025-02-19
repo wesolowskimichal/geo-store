@@ -26,7 +26,8 @@ SECRET_KEY = "django-insecure-k4=9(b9=!#hb@drxr8z52n6o!wdl_^^a8%+*xwynb_(fxlna%0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []  # type: ignore[var-annotated]
+ALLOWED_HOSTS = ["*"]  # type: ignore[var-annotated]
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Application definition
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "rest_framework",
     "geolocation",
     "drf_spectacular",
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
