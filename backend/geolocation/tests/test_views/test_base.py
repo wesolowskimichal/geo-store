@@ -15,10 +15,17 @@ class BaseAPITestCase:
     def fake_get_geolocation_data_success(ip_or_domain: str):
         """Simulate a successful IPStack response."""
         return {
+            "ip_or_url": "1.1.1.1",
+            "type": "ipv4",
             "country_name": "Testland",
-            "latitude": 12.34,
-            "longitude": 56.78,
-            "some_extra_field": "value",
+            "latitude": 12.12,
+            "longitude": -21.21,
+            "location": {
+                "country_flag_emoji_unicode": "+1F1F9 +1F1F3",
+            },
+            "status": "SUCCESS",
+            "created_at": "2025-02-19T22:49:33.412Z",
+            "updated_at": "2025-02-19T22:49:33.412Z",
         }
 
     @staticmethod

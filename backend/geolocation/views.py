@@ -46,13 +46,18 @@ class GeoDataListCreateAPIView(ListCreateAPIView):
                 instance.longitude = service_data.get("longitude")
                 instance.raw_response = service_data
                 instance.status = "SUCCESS"
+                instance.country_flag_emoji_unicode = service_data.get(
+                    "location", {}
+                ).get("country_flag_emoji_unicode", "")
                 instance.save(
                     update_fields=[
+                        "type",
                         "country_name",
                         "latitude",
                         "longitude",
                         "raw_response",
                         "status",
+                        "country_flag_emoji_unicode",
                     ]
                 )
 

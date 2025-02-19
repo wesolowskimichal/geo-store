@@ -31,15 +31,21 @@ class TestPostAPI(BaseAPITestCase):
         )
         client = APIClient()
         url = reverse("geodata-list-create")
-        payload = {"ip_or_url": "1.1.1.1", "type": "ip"}
+        payload = {"ip_or_url": "1.1.1.1"}
         response = client.post(url, payload, format="json")
         assert response.status_code == 201, response.data
         data = response.data
 
-        assert data["status"] == "SUCCESS"
+        assert data["ip_or_url"] == "1.1.1.1"
+        assert data["type"] == "ipv4"
         assert data["country_name"] == "Testland"
-        assert data["latitude"] == 12.34
-        assert data["longitude"] == 56.78
+        assert data["latitude"] == 12.12
+        assert data["longitude"] == -21.21
+        assert data["country_flag_emoji_unicode"] == "+1F1F9 +1F1F3"
+        assert data["raw_response"] is not None
+        assert data["status"] == "SUCCESS"
+        assert data["created_at"] is not None
+        assert data["updated_at"] is not None
 
     @pytest.mark.django_db
     def test_create_geodata_failure_response(self, monkeypatch):
