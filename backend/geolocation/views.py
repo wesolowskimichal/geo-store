@@ -1,5 +1,7 @@
 from rest_framework.generics import ListCreateAPIView  # type: ignore
 from rest_framework.generics import RetrieveDestroyAPIView  # type: ignore
+from rest_framework.filters import OrderingFilter  # type: ignore
+from django_filters.rest_framework import DjangoFilterBackend  # type: ignore
 from django.db import OperationalError
 from .models import GeoData
 from .serializers import GeoDataSerializer
@@ -11,6 +13,17 @@ from .exceptions import DatabaseUnavailableException
 
 class GeoDataListCreateAPIView(ListCreateAPIView):
     queryset = GeoData.objects.all()
+    fliter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = {
+        "ip_or_url": ["exact", "icontains"],
+        "type": ["exact", "icontains"],
+        "country_name": ["exact", "icontains"],
+        "latitude": ["exact", "gte", "lte"],
+        "longitude": ["exact", "gte", "lte"],
+        "status": ["exact"],
+    }
+    ordering_fields = ["updated_at"]
+    ordering = ["updated_at"]
 
     def get_serializer_class(self):
         if self.request.method == "GET":
