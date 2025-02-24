@@ -3,5 +3,12 @@
   "flake8.args": [
     "--config=backend/.flake8",
     "--line-length=160"
-  ]
+  ],
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "prettier.configPath": "frontend/.prettierrc",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }

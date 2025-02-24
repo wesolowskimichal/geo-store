@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore
 from rest_framework import status  # type: ignore
 from rest_framework.test import APIClient  # type: ignore
 from django.urls import reverse
@@ -60,3 +60,47 @@ class TestDestroyAPI(BaseAPITestCase):
         assert delete_response.status_code == 503, delete_response.data
         data = delete_response.data
         assert "database is unavailable" in str(data.get("detail")).lower()
+
+
+@pytest.mark.django_db
+class TestGeoDataDestroyBulkAPIView(BaseAPITestCase):
+    """
+    Tests for POST /api/geodata/bulk-destroy/ using GeoDataDestroyBulkAPIView.
+    """
+
+    def test_bulk_destroy_success(self):
+        """
+        Bulk delete multiple existing GeoData records.
+        Expect 204 No Content and records are removed.
+        """
+        # Create multiple GeoData records.
+        payload1 = {"ip_or_url": "1.1.1.1"}
+        payload2 = {"ip_or_url": "8.8.8.8"}
+        geo1 = GeoData.objects.create(**payload1)
+        geo2 = GeoData.objects.create(**payload2)
+
+        url = reverse("geodata-destroy-bulk")
+        data = {"ids": [geo1.id, geo2.id]}
+        response = self.client.post(url, data, format="json")
+        assert response.status_code == status.HTTP_204_NO_CONTENT, response.data
+
+        # Verify that both records are deleted.
+        assert not GeoData.objects.filter(id=geo1.id).exists()
+        assert not GeoData.objects.filter(id=geo2.id).exists()
+
+    def test_bulk_destroy_with_nonexistent_ids(self):
+        """
+        Attempt to bulk delete including an ID that does not exist.
+        Expect 204 No Content and deletion of any existing records.
+        """
+        payload = {"ip_or_url": "1.1.1.1"}
+        geo = GeoData.objects.create(**payload)
+
+        url = reverse("geodata-destroy-bulk")
+        # Include one valid and one non-existent ID.
+        data = {"ids": [geo.id, 999999]}
+        response = self.client.post(url, data, format="json")
+        assert response.status_code == status.HTTP_204_NO_CONTENT, response.data
+
+        # Verify that the existing record is deleted.
+        assert not GeoData.objects.filter(id=geo.id).exists()

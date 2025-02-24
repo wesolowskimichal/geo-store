@@ -1,4 +1,4 @@
-import pytest
+import pytest  # type: ignore
 from rest_framework import status  # type: ignore
 from django.urls import reverse
 from geolocation.models import GeoData
@@ -29,10 +29,9 @@ class TestGetAPI(BaseAPITestCase):
         response = self.client.get(list_url, format="json")
         assert response.status_code == status.HTTP_200_OK, response.data
         data = response.data
-        assert isinstance(data, list)
+        print(data)
         assert len(data) >= 2
-
-        for item in data:
+        for item in data["data"]:
             assert "id" in item
             assert "ip_or_url" in item
             assert "type" in item
