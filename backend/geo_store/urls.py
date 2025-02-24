@@ -18,11 +18,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include
 from django.urls import path
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularRedocView,
-    SpectacularSwaggerView,
-)
+from drf_spectacular.views import SpectacularAPIView  # type: ignore
+from drf_spectacular.views import SpectacularRedocView  # type: ignore
+from drf_spectacular.views import SpectacularSwaggerView  # type: ignore
 
 
 urlpatterns = [

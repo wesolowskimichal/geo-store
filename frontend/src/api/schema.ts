@@ -1,4 +1,4 @@
-import z from 'zod';
+import z, { ZodTypeAny } from 'zod';
 
 export const geoDataShortSchema = z.object({
   id: z.number(),
@@ -12,13 +12,19 @@ export const geoDataShortSchema = z.object({
   created_at: z.coerce.date(),
   updated_at: z.coerce.date(),
 });
+export const geoDataSchema = geoDataShortSchema.extend({
+  raw_response: z.object({}).passthrough().nullable(),
+});
 
-export const geoDataSchema = z.union([
-  geoDataShortSchema,
+export const paginatedSchema = <T extends ZodTypeAny>(itemSchema: T) =>
   z.object({
-    raw_response: z.object({}).passthrough().nullable(),
-  }),
-]);
+    data: itemSchema.array(),
+    meta: z.object({
+      total: z.number(),
+      page: z.number(),
+      last_page: z.number(),
+    }),
+  });
 
 export type GeoDataShort = z.infer<typeof geoDataShortSchema>;
 export type GeoData = z.infer<typeof geoDataSchema>;

@@ -1,14 +1,21 @@
+import { z } from 'zod';
 import api from './api';
+import { listFilters } from './filters';
 import {
   type GeoData,
   geoDataSchema,
-  type GeoDataShort,
   geoDataShortSchema,
+  paginatedSchema,
 } from './schema';
 
-export const listGeoData = async (): Promise<GeoDataShort[]> => {
-  const response = await api.get('geodata/');
-  return geoDataShortSchema.array().parse(response.data);
+const paginatedGeoDataShortSchema = paginatedSchema(geoDataShortSchema);
+type PaginatedFetch = z.infer<typeof paginatedGeoDataShortSchema>;
+
+export const listGeoData = async (
+  filters: listFilters
+): Promise<PaginatedFetch> => {
+  const response = await api.get('geodata/', { params: filters });
+  return paginatedGeoDataShortSchema.parse(response.data);
 };
 
 export const createGeoData = async (ip_or_url: string): Promise<GeoData> => {
@@ -23,4 +30,8 @@ export const detailGeoData = async (id: number): Promise<GeoData> => {
 
 export const destroyGeoData = async (id: number): Promise<void> => {
   await api.delete(`geodata/${id}/`);
+};
+
+export const destroyGeoDataBulk = async (ids: number[]): Promise<void> => {
+  await api.post(`geodata/bulk-delete/`, { ids });
 };

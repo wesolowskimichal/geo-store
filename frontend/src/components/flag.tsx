@@ -1,7 +1,9 @@
 import { CircleXIcon } from 'lucide-react';
+import { ReactNode } from 'react';
 
 type Props = {
   flagUnicode: string;
+  fallback?: ReactNode;
 };
 
 const convertUnicodeToEmoji = (unicode: string) =>
@@ -13,12 +15,10 @@ const convertUnicodeToEmoji = (unicode: string) =>
     })
     .join('');
 
-export const Flag = ({ flagUnicode }: Props) => {
-  const emoji =
-    flagUnicode.length > 0 ? (
-      convertUnicodeToEmoji(flagUnicode)
-    ) : (
-      <CircleXIcon />
-    );
-  return <div>{emoji}</div>;
+export const Flag = ({ flagUnicode, fallback = <CircleXIcon /> }: Props) => {
+  return (
+    <div>
+      {flagUnicode.length > 0 ? convertUnicodeToEmoji(flagUnicode) : fallback}
+    </div>
+  );
 };

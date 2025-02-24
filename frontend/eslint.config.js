@@ -36,7 +36,7 @@ export default [
     rules: {
       // 1) ESLint recommended
       ...jsConfigs.recommended.rules,
-
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/ban-ts-comment': 'error',

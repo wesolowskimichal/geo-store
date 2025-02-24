@@ -1,5 +1,5 @@
 import requests  # type: ignore
-import pytest
+import pytest  # type: ignore
 
 from geolocation.services import get_geolocation_data, IPSTACK_BASE_URL
 from geolocation.exceptions import IPStackAPIException
