@@ -1,6 +1,7 @@
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';
+import { Toaster } from './components/ui/sonner';
 
 const router = createRouter({
   routeTree,
@@ -25,6 +26,7 @@ export const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
+      <Toaster />
     </QueryClientProvider>
   );
 };

@@ -1,4 +1,7 @@
 from rest_framework.serializers import ModelSerializer  # type: ignore
+from rest_framework.serializers import Serializer  # type: ignore
+from rest_framework.serializers import ListField  # type: ignore
+from rest_framework.serializers import IntegerField  # type: ignore
 from .models import GeoData
 
 
@@ -34,3 +37,11 @@ class GeoDataShortSerializer(ModelSerializer):
             "created_at",
             "updated_at",
         )
+
+
+class BulkDeleteSerializer(Serializer):
+    ids = ListField(
+        child=IntegerField(),
+        required=True,
+        help_text="A list of GeoData record IDs to delete.",
+    )

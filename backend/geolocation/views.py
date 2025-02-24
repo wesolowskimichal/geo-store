@@ -1,14 +1,37 @@
 from rest_framework.generics import ListCreateAPIView  # type: ignore
 from rest_framework.generics import RetrieveDestroyAPIView  # type: ignore
+from rest_framework.views import APIView  # type: ignore
 from rest_framework.filters import OrderingFilter  # type: ignore
+from rest_framework.pagination import PageNumberPagination  # type: ignore
+from rest_framework.response import Response  # type: ignore
 from django_filters.rest_framework import DjangoFilterBackend  # type: ignore
+from drf_spectacular.utils import extend_schema, OpenApiResponse  # type: ignore
 from django.db import OperationalError
 from .models import GeoData
+from .serializers import BulkDeleteSerializer
 from .serializers import GeoDataSerializer
 from .serializers import GeoDataShortSerializer
 from .services import get_geolocation_data
 from .exceptions import IPStackAPIException
 from .exceptions import DatabaseUnavailableException
+
+
+class GeoDataPagination(PageNumberPagination):
+    page_size = 25
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        return Response(
+            {
+                "data": data,
+                "meta": {
+                    "total": self.page.paginator.count,
+                    "page": self.page.number,
+                    "last_page": self.page.paginator.num_pages,
+                },
+            }
+        )
 
 
 class GeoDataListCreateAPIView(ListCreateAPIView):
@@ -23,7 +46,8 @@ class GeoDataListCreateAPIView(ListCreateAPIView):
         "status": ["exact"],
     }
     ordering_fields = ["updated_at"]
-    ordering = ["updated_at"]
+    ordering = ["-updated_at"]
+    pagination_class = GeoDataPagination
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -92,3 +116,20 @@ class GeoDataDestroyDetailAPIView(RetrieveDestroyAPIView):
             return super().delete(request, *args, **kwargs)
         except OperationalError as exc:
             raise DatabaseUnavailableException() from exc
+
+
+class GeoDataDestroyBulkAPIView(APIView):
+    @extend_schema(
+        description="Deletes multiple GeoData records given a list of IDs provided in the request body.",
+        request=BulkDeleteSerializer,
+        responses={204: OpenApiResponse(description="Bulk delete successful.")},
+    )
+    def post(self, request):
+        serializer = BulkDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        ids = serializer.validated_data["ids"]
+        try:
+            GeoData.objects.filter(id__in=ids).delete()
+        except OperationalError as exc:
+            raise DatabaseUnavailableException() from exc
+        return Response(status=204)

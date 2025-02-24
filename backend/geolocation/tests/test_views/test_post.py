@@ -1,5 +1,5 @@
 from geolocation.tests.test_views.test_base import BaseAPITestCase
-import pytest
+import pytest  # type: ignore
 from rest_framework.test import APIClient  # type: ignore
 from django.urls import reverse
 
